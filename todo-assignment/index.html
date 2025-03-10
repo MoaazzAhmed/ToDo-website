@@ -36,7 +36,7 @@
     <div class="controller">
       <!-- tasks -->
       <div class="tasks">
-        
+
       </div>
 
       <div class="controller-btn">
@@ -46,11 +46,11 @@
           items left
         </div>
         <ul>
-          <li id="all-tasks" class="active">All</li>
-          <li id="active-tasks">Active </li>
-          <li id="completed-tasks">Completed</li>
+          <li id="all-tasks" class="active" onclick="renderTasks()">All</li>
+          <li id="active-tasks" onclick="filtered_activeTasks()">Active </li>
+          <li id="completed-tasks" onclick="filtered_completedTasks()">Completed</li>
         </ul>
-        <span id="clearAll">Clear Completed</span>
+        <span id="clearAll" onclick="clearCompleted()">Clear Completed</span>
       </div>
     </div>
   </div>

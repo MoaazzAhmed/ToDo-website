@@ -5,7 +5,10 @@ const tasks_container = document.querySelector(".tasks")
 const items_left = document.querySelector("#items-left")
 const bg_img = document.querySelector("#bg-img")
 
+
 const tasks = []
+let active = []
+const completed = []
 let idCounter = 0
 
 function changeTheme() {
@@ -35,8 +38,46 @@ function renderTasks() {
 
         tasks_container.appendChild(taskElement)
     })
+    items_left.innerHTML = tasks.filter(task => task.status == "uncompleted").length
 
-    items_left.innerHTML = `${tasks.length}`
+}
+
+function render_activeTasks() {
+    tasks_container.innerHTML = ""
+    active.forEach(task => {
+        let taskElement = document.createElement("div")
+        taskElement.classList.add("task")
+        taskElement.id = `${task.id}`
+
+        taskElement.innerHTML = `
+            <div class="custom-check ${task.status == "completed" ? "check" : ""}" onclick="toggleTask(${task.id})">
+                <span></span>
+            </div>
+            <span>${task.value}</span>
+            <close class="close" onclick="removeTask(${task.id})"><img src="images/icon-cross.svg"></close>
+        `
+
+        tasks_container.appendChild(taskElement)
+    })
+
+}
+function render_completedTasks() {
+    tasks_container.innerHTML = ""
+    completed.forEach(task => {
+        let taskElement = document.createElement("div")
+        taskElement.classList.add("task")
+        taskElement.id = `${task.id}`
+
+        taskElement.innerHTML = `
+            <div class="custom-check ${task.status == "completed" ? "check" : ""}" onclick="toggleTask(${task.id})">
+                <span></span>
+            </div>
+            <span>${task.value}</span>
+            <close class="close" onclick="removeTask(${task.id})"><img src="images/icon-cross.svg"></close>
+        `
+
+        tasks_container.appendChild(taskElement)
+    })
 }
 
 function toggleTask(taskId) {
@@ -56,14 +97,47 @@ function removeTask(taskId) {
 
 document.querySelector("#task-input").addEventListener("keydown", function (e) {
     if (e.key == "Enter") {
-        let newTask = {
-            id: idCounter++,
-            value: this.value,
-            status: (custom_check_box.classList.contains("check")) ? "completed" : "uncompleted"
+        if (this.value != "") {
+            let newTask = {
+                id: idCounter++,
+                value: this.value,
+                status: (custom_check_box.classList.contains("check")) ? "completed" : "uncompleted"
+            }
+            tasks.push(newTask)
+            this.value = ""
+            renderTasks()
+        }
+        else {
+            alert("Fill the empty field")
         }
 
-        tasks.push(newTask)
-        this.value = ""
-        renderTasks()
+
     }
 })
+
+function filtered_completedTasks() {
+    completed.length = 0
+    for (const task of tasks) {
+        if (task.status == "completed")
+            completed.push(task)
+    }
+
+    render_completedTasks()
+}
+function filtered_activeTasks() {
+    active.length = 0
+    for (const task of tasks) {
+        if (task.status == "uncompleted")
+            active.push(task)
+    }
+
+    render_activeTasks()
+}
+
+function clearCompleted() {
+    active = tasks.filter(task => task.status != "completed")
+
+    tasks.length = 0
+    tasks.push(...active)
+    renderTasks()
+}
